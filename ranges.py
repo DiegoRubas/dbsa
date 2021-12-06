@@ -55,10 +55,10 @@ class Table:
     #                 self.weighted_occ[j] += 1 / bin_count
 
 
-def create_range(bound_1, bound_2):
+def create_range(b1, b2):
     lower_bound, upper_bound = 0, 0
     while not (lower_bound < upper_bound):
-        lower_bound, upper_bound = rnd.randrange(bound_1, bound_2), rnd.randrange(bound_1, bound_2)
+        lower_bound, upper_bound = rnd.randrange(b1, b2), rnd.randrange(b1, b2)
     return lower_bound, upper_bound
 
 
@@ -162,7 +162,9 @@ def join_estimation(t1, t2):
             if overlaps(t1.bounds[i], t2.bounds[j]):
                 # count += 1  # adds to the count whenever bounds overlap
                 count += t1.occurrence[i] * t2.occurrence[j]
-    count /= round(t1.avg_bin_count * 0.5 + t2.avg_bin_count + 0.5)
+    # count /= t1.avg_bin_count  # ±28%
+    # count /= t2.avg_bin_count  # ±28%
+    count /= t1.avg_bin_count * 0.5 + t2.avg_bin_count + 0.5  # 23%
     count = int(round(count))
     return count
 
@@ -209,12 +211,12 @@ def left_estimation(t1, r):
     count, range_bin_count = 0, 0
     for i in range(NO_BINS):
         if str_left_of(t1.bounds[i], r):
-            count += t1.occurrence[i]
+            count += t1.occurrence[i]  # 180%
             range_bin_count += 1
     # print("left estimation before dividing:", count)
-    # count /= round(t1.avg_bin_count * 0.5 + range_bin_count * 0.5)
-    count /= round(t1.avg_bin_count)
-    # if range_bin_count != 0:
+    # count /= round(t1.avg_bin_count * 0.5 + range_bin_count * 0.5)  # 36%
+    count /= round(t1.avg_bin_count)  # 30%
+    # if range_bin_count != 0:  # 50%
     #     count /= round(range_bin_count)
     count = int(round(count))
     return count
@@ -277,12 +279,12 @@ def overlap_estimation(t1, r):
     count, range_bin_count = 0, 0
     for i in range(NO_BINS):
         if overlaps(t1.bounds[i], r):
-            count += t1.occurrence[i]
+            count += t1.occurrence[i]  # 73%
             range_bin_count += 1
-    count /= round(t1.avg_bin_count * 0.5 + range_bin_count * 0.5)
-    # count /= round(t1.avg_bin_count)
-    # if range_bin_count != 0:
-    #     count /= round(range_bin_count)
+    # count /= round(t1.avg_bin_count * 0.5 + range_bin_count * 0.5)  # 70%
+    # count /= round(t1.avg_bin_count)  # 70%
+    if range_bin_count != 0:  # 61%
+        count /= round(range_bin_count)
     count = int(round(count))
     return count
 
@@ -332,21 +334,21 @@ def overlap_csv():
         csv_writer.writerow(["average relative difference " + str(round(avg_rel_diff * 100, 2)) + "%"])
 
 
-table_1, table_2 = Table(NO_JOIN_RANGES), Table(NO_JOIN_RANGES)
-display_2_tables(table_1, table_2)
-print_join_details(table_1, table_2)
-join_csv()
-print()
+# table_1, table_2 = Table(NO_JOIN_RANGES), Table(NO_JOIN_RANGES)
+# display_2_tables(table_1, table_2)
+# print_join_details(table_1, table_2)
+# join_csv()
+# print()
 
 
-table_3, random_range = Table(NO_SEL_RANGES), create_range(0, 101)
-display_table(table_3, random_range)
-print_left_of_details(table_3, random_range)
-left_of_csv()
-print()
+# table_3, random_range = Table(NO_SEL_RANGES), create_range(0, 101)
+# display_table(table_3, random_range)
+# print_left_of_details(table_3, random_range)
+# left_of_csv()
+# print()
 
 
-table_4, random_range_2 = Table(NO_SEL_RANGES), create_range(0, 101)
-display_table(table_4, random_range_2)
-print_overlap_details(table_4, random_range_2)
-overlap_csv()
+# table_4, random_range_2 = Table(NO_SEL_RANGES), create_range(0, 101)
+# display_table(table_4, random_range_2)
+# print_overlap_details(table_4, random_range_2)
+# overlap_csv()
